@@ -1,0 +1,263 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://buoyancis.com/schemas/compliance-report.schema.json",
+  "title": "Compliance & Security Report",
+  "description": "JSON Schema for the exported Compliance & Security Report document",
+  "type": "object",
+  "required": ["metadata", "executiveSummary", "dataCollectionPractices", "securityMeasures", "dataRetentionPolicies", "complianceChecklist"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "description": "Report metadata and versioning information",
+      "required": ["reportTitle", "reportDate", "version", "classification", "reviewCycle", "generatedBy"],
+      "properties": {
+        "reportTitle": {
+          "type": "string",
+          "description": "Title of the compliance report",
+          "example": "Compliance & Security Report"
+        },
+        "reportDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when the report was generated"
+        },
+        "version": {
+          "type": "string",
+          "description": "Report version number",
+          "pattern": "^\\d+\\.\\d+$",
+          "example": "1.0"
+        },
+        "classification": {
+          "type": "string",
+          "description": "Document classification level",
+          "enum": ["Public", "Internal", "Internal / Confidential", "Confidential", "Restricted"]
+        },
+        "reviewCycle": {
+          "type": "string",
+          "description": "How often the report should be reviewed",
+          "enum": ["Monthly", "Quarterly", "Semi-Annually", "Annually"]
+        },
+        "generatedBy": {
+          "type": "string",
+          "description": "System or entity that generated the report"
+        }
+      },
+      "additionalProperties": false
+    },
+    "executiveSummary": {
+      "type": "object",
+      "description": "High-level overview of security posture",
+      "required": ["securityLayers", "rlsCoverage", "autoPurgeTables", "monitoring", "auditTrail"],
+      "properties": {
+        "securityLayers": {
+          "type": "integer",
+          "description": "Number of security layers implemented",
+          "minimum": 1
+        },
+        "rlsCoverage": {
+          "type": "string",
+          "description": "Percentage of tables with Row-Level Security enabled",
+          "pattern": "^\\d{1,3}%$"
+        },
+        "autoPurgeTables": {
+          "type": "integer",
+          "description": "Number of tables with automatic data purge enabled",
+          "minimum": 0
+        },
+        "monitoring": {
+          "type": "string",
+          "description": "Monitoring coverage level",
+          "example": "24/7"
+        },
+        "auditTrail": {
+          "type": "string",
+          "description": "Audit trail completeness",
+          "enum": ["None", "Partial", "Full"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "dataCollectionPractices": {
+      "type": "array",
+      "description": "List of data types collected and their handling practices",
+      "items": {
+        "type": "object",
+        "required": ["dataType", "purpose", "retention", "legalBasis", "encryption"],
+        "properties": {
+          "dataType": {
+            "type": "string",
+            "description": "Type of data being collected",
+            "example": "Email Address"
+          },
+          "purpose": {
+            "type": "string",
+            "description": "Business purpose for collecting this data"
+          },
+          "retention": {
+            "type": "string",
+            "description": "How long the data is retained"
+          },
+          "legalBasis": {
+            "type": "string",
+            "description": "Legal basis for data processing under GDPR",
+            "enum": ["Consent", "Contract", "Legal Obligation", "Vital Interests", "Public Task", "Legitimate interest"]
+          },
+          "encryption": {
+            "type": "string",
+            "description": "Encryption status and method"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securityMeasures": {
+      "type": "array",
+      "description": "Security measures organized by category",
+      "items": {
+        "type": "object",
+        "required": ["category", "description", "controls"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Security category name",
+            "example": "Application Security"
+          },
+          "description": {
+            "type": "string",
+            "description": "Overview of this security category"
+          },
+          "controls": {
+            "type": "array",
+            "description": "List of security controls in this category",
+            "items": {
+              "type": "object",
+              "required": ["name", "details", "status"],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the security control"
+                },
+                "details": {
+                  "type": "string",
+                  "description": "Detailed description of the control implementation"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Implementation status of the control",
+                  "enum": ["implemented", "planned", "n/a"]
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "dataRetentionPolicies": {
+      "type": "object",
+      "description": "Data retention configuration and policies",
+      "required": ["dynamicPolicies", "staticPolicies"],
+      "properties": {
+        "dynamicPolicies": {
+          "type": "array",
+          "description": "Database table retention policies (configurable)",
+          "items": {
+            "type": "object",
+            "required": ["tableName", "retentionDays", "isEnabled", "description", "automation"],
+            "properties": {
+              "tableName": {
+                "type": "string",
+                "description": "Database table name",
+                "pattern": "^[a-z_]+$"
+              },
+              "retentionDays": {
+                "type": "integer",
+                "description": "Number of days to retain records",
+                "minimum": 1,
+                "maximum": 3650
+              },
+              "isEnabled": {
+                "type": "boolean",
+                "description": "Whether automatic purge is enabled for this table"
+              },
+              "description": {
+                "type": "string",
+                "description": "Purpose or description of the data in this table"
+              },
+              "automation": {
+                "type": "string",
+                "description": "Automation schedule for cleanup",
+                "example": "Daily cron at 3:00 AM UTC"
+              },
+              "lastUpdated": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the retention setting was last modified"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "staticPolicies": {
+          "type": "array",
+          "description": "Fixed retention policies for non-database resources",
+          "items": {
+            "type": "object",
+            "required": ["resource", "retention", "automation", "purpose", "isEnabled"],
+            "properties": {
+              "resource": {
+                "type": "string",
+                "description": "Resource name or type"
+              },
+              "retention": {
+                "type": "string",
+                "description": "Retention period description"
+              },
+              "automation": {
+                "type": "string",
+                "description": "How cleanup is automated"
+              },
+              "purpose": {
+                "type": "string",
+                "description": "Purpose of this resource"
+              },
+              "isEnabled": {
+                "type": "boolean",
+                "description": "Whether this policy is active"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "complianceChecklist": {
+      "type": "array",
+      "description": "GDPR and compliance requirements checklist",
+      "items": {
+        "type": "object",
+        "required": ["requirement", "status", "notes"],
+        "properties": {
+          "requirement": {
+            "type": "string",
+            "description": "Compliance requirement name",
+            "example": "Data minimization"
+          },
+          "status": {
+            "type": "string",
+            "description": "Implementation status",
+            "enum": ["implemented", "planned", "n/a"]
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes or implementation details"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
