@@ -1,84 +1,119 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackpalace AB | The Buoyancis Matrix</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     
-    <!-- Monospace Font (Fira Code only — JetBrains Mono is bundled via @fontsource) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- PWA Meta Tags -->
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Buoyancis" />
-    <meta name="application-name" content="Buoyancis" />
-    <meta name="msapplication-TileColor" content="#1a1a1a" />
-    <meta name="theme-color" content="#1a1a1a" />
-    
-    <!-- PWA Icons -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/pwa-192x192.png" />
-    <link rel="manifest" href="/manifest.webmanifest" />
-    
-    <!-- Plausible Analytics -->
-    <script defer data-domain="buoyancis.com" src="https://plausible.io/js/script.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sovereign-blue': '#050A15',
+                        'royal-gold': '#D4AF37',
+                        'grey-gold': '#B0A695',
+                        'silver-grey': '#E0E0E0',
+                    },
+                    fontFamily: {
+                        'serif': ['"Playfair Display"', 'serif'],
+                        'sans': ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
 
-    <!-- Primary SEO -->
-    <title>Buoyancis | The Global Verification Layer</title>
-    <meta name="description" content="We replace the noise of &#39;Five Stars&#39; with the physics of Reputation Gravity.
-Trust has mass. We measure it.">
-    <meta name="author" content="Buoyancis" />
-    <meta name="keywords" content="verification protocol, reputation gravity, trust measurement, signal verification, observer nodes, truth protocol, global verification layer" />
-    <meta name="robots" content="index, follow, max-image-preview:large" />
-    <link rel="canonical" href="https://buoyancis.com/" />
+    <style>
+        /* 深海與黑洞的背景漸變，取代單調的純黑 */
+        body {
+            background: radial-gradient(circle at 50% 0%, #0a1329 0%, #050A15 60%, #02040a 100%);
+            color: #E0E0E0;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-    <!-- Open Graph -->
-    
-    
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://buoyancis.com/" />
-    <meta property="og:image" content="https://buoyancis.com/og-image.png">
-    <meta property="og:site_name" content="Buoyancis" />
-    <meta property="og:locale" content="en_US" />
+        /* 矩陣毛玻璃卡片特效 (Glassmorphism) */
+        .matrix-card {
+            background: rgba(176, 166, 149, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            transition: all 0.4s ease;
+        }
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Buoyancis" />
-    
-    
-    <meta name="twitter:image" content="https://buoyancis.com/og-image.png">
+        .matrix-card:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
 
-    <!-- JSON-LD Structured Data -->
-    `` <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Buoyancis",
-      "url": "https://buoyancis.com",
-      "logo": "https://buoyancis.com/og-image.png",
-      "description": "The world's first Verification Protocol. Trust has mass—we measure it.",
-      "foundingDate": "2024",
-      "sameAs": [],
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "customer support",
-        "url": "https://buoyancis.com/#contact"
-      }
-    }
-    ``</script>
-    <meta property="og:title" content="Buoyancis | The Global Verification Layer">
-  <meta name="twitter:title" content="Buoyancis | The Global Verification Layer">
-  <meta property="og:description" content="We replace the noise of &#39;Five Stars&#39; with the physics of Reputation Gravity.
-Trust has mass. We measure it.">
-  <meta name="twitter:description" content="We replace the noise of &#39;Five Stars&#39; with the physics of Reputation Gravity.
-Trust has mass. We measure it.">
+        /* 金屬文字特效 */
+        .text-gradient-gold {
+            background: linear-gradient(to right, #B0A695, #D4AF37, #B0A695);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
 </head>
+<body class="font-sans antialiased selection:bg-royal-gold selection:text-sovereign-blue">
 
-  <body style="margin:0;padding:0;background:#000;">
-    <div id="root"></div>
-    ``<script type="module" src="/src/main.tsx"></script>
-  </body>
+    <nav class="w-full py-8 px-6 md:px-12 flex justify-between items-center border-b border-royal-gold/10">
+        <div class="font-serif text-2xl tracking-widest text-silver-grey">
+            BLACKPALACE<span class="text-royal-gold">.</span>
+        </div>
+        <div class="text-xs tracking-[0.2em] text-grey-gold uppercase">
+            Stockholm Matrix
+        </div>
+    </nav>
+
+    <main class="flex-grow flex flex-col items-center justify-center px-4 py-20 text-center">
+        <p class="text-royal-gold tracking-[0.3em] text-sm md:text-base mb-6 font-semibold uppercase">
+            The Buoyancis Methodology
+        </p>
+        <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight text-gradient-gold">
+            Dissolving the <br/> Tyranny of Experience.
+        </h1>
+        <p class="max-w-2xl text-silver-grey text-lg md:text-xl font-light leading-relaxed mb-12">
+            A premier strategic organization navigating Entropy Increase (t<sup>e</sup>). We build frameworks of absolute order to master high-value asset scaling in Scandinavia.
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl mt-8">
+            <div class="matrix-card p-10 rounded-sm text-left">
+                <div class="font-serif text-4xl text-royal-gold mb-4">[ A ]</div>
+                <h3 class="font-serif text-2xl text-silver-grey mb-3">Assets</h3>
+                <p class="text-sm text-grey-gold leading-relaxed">The uncompromising vehicle of our portfolio. Tangible leverage navigating through time and space.</p>
+            </div>
+            
+            <div class="matrix-card p-10 rounded-sm text-left">
+                <div class="font-serif text-4xl text-royal-gold mb-4">[ 9 ]</div>
+                <h3 class="font-serif text-2xl text-silver-grey mb-3">Power</h3>
+                <p class="text-sm text-grey-gold leading-relaxed">The ultimate structural foundation. Absolute authority over the variables of the market matrix.</p>
+            </div>
+
+            <div class="matrix-card p-10 rounded-sm text-left">
+                <div class="font-serif text-4xl text-royal-gold mb-4">[ O ]</div>
+                <h3 class="font-serif text-2xl text-silver-grey mb-3">Order</h3>
+                <p class="text-sm text-grey-gold leading-relaxed">Forging unshakeable systems out of chaos. The antidote to uncontrolled entropy.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="w-full py-10 border-t border-royal-gold/10 text-center">
+        <p class="text-sm text-grey-gold font-light tracking-widest mb-2">
+            SECURE TRANSMISSION LINE
+        </p>
+        <a href="mailto:office@blackpalace.se" class="text-silver-grey font-serif text-xl hover:text-royal-gold transition-colors duration-300">
+            office@blackpalace.se
+        </a>
+        <p class="mt-8 text-xs text-grey-gold/50 tracking-widest uppercase">
+            &copy; 2026 Blackpalace AB. All codes reserved.
+        </p>
+    </footer>
+
+</body>
 </html>

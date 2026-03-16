@@ -1,32 +1,112 @@
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Star } from "lucide-react";
+import { Star, Loader2, ChevronDown, AlertTriangle } from "lucide-react";
+import { createClient } from '@supabase/supabase-js';
+import TrustCurveChart from "./TrustCurveChart"; 
 
-// --- 10.0 協議：18 家餐廳完全體數據 ---
-const allRestaurants = [
-  // 前 10 名 (Elite Tier)
-  { id: 1, name: "Frantzén", rating: 9.9, category: "Modern Nordic", region: "Norrmalm" },
-  { id: 2, name: "AIRA", rating: 9.8, category: "Contemporary", region: "Djurgården" },
-  { id: 3, name: "Seafood Gastro", rating: 9.7, category: "Seafood", region: "Norrmalm" },
-  { id: 4, name: "Operakällaren", rating: 9.6, category: "Classic French", region: "Norrmalm" },
-  { id: 5, name: "Ekstedt", rating: 9.5, category: "Fire-cooked", region: "Östermalm" },
-  { id: 6, name: "Aloë", rating: 9.5, category: "Global Fusion", region: "Älvsjö" },
-  { id: 7, name: "Lilla Ego", rating: 9.4, category: "Modern Swedish", region: "Vasastan" },
-  { id: 8, name: "Etoile", rating: 9.4, category: "Innovative", region: "Vasastan" },
-  { id: 9, name: "Nour", rating: 9.3, category: "Nordic-Japanese", region: "Norrmalm" },
-  { id: 10, name: "Adam/Albin", rating: 9.2, category: "Modern European", region: "Östermalm" },
-  // 後 8 名 (Essential Tier)
-  { id: 11, name: "Kajsas Fisk", rating: 8.9, category: "Seafood", region: "Hötorgshallen" },
-  { id: 12, name: "Cravings Mediterranean", rating: 8.7, category: "Mediterranean", region: "Vasastan" },
-  { id: 13, name: "Restaurang Cypern", rating: 8.5, category: "Cypriot", region: "Valhallavägen" },
-  { id: 14, name: "Brazilia Restaurang", rating: 8.4, category: "Steakhouse", region: "Södermalm" },
-  { id: 15, name: "Taste by Nordrest", rating: 8.2, category: "Modern Buffet", region: "Solna" },
-  { id: 16, name: "Antu Kitchen", rating: 8.1, category: "Chilean", region: "Skanstull" },
-  { id: 17, name: "Rara Himalayan", rating: 8.0, category: "Nepalese", region: "Kungsholmen" },
-  { id: 18, name: "Happy Lamb Hot Pot", rating: 7.9, category: "Hot Pot", region: "Sveavägen" }
-];
+const supabaseUrl = 'https://ashklwdilmknamwcosvc.supabase.co';
+const supabaseAnonKey = 'sb_publishable_qr0CFI-g9AENJnuiCAZtvw_kLckW9hr';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-const RestaurantList = ({ searchQuery, filters }: { searchQuery: string; filters: any }) => {
+const RestaurantCard = ({ res, getLocalizedName }: { res: any, getLocalizedName: (n: string) => string }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  // 🟢 分數與價格邏輯
+  const score = Math.round(Number(res.current_rating || 0));
+  const priceLevel = res.price_level || 2; // 預設為 2 ($$)
+  const priceString = "$".repeat(priceLevel);
+  
+  // 🔴 溢價幻覺核心演算法：收費 $$$ 或 $$$$，但分數低於 85
+  const isPremiumIllusion = priceLevel >= 3 && score < 85;
+
+  return (
+    <div 
+      onClick={() => setIsExpanded(!isExpanded)}
+      className={`group bg-black border p-5 rounded-xl transition-all duration-300 cursor-pointer flex flex-col overflow-hidden relative
+        ${isExpanded ? 'shadow-[0_0_20px_rgba(212,175,55,0.1)]' : ''}
+        ${isPremiumIllusion 
+          ? 'border-red-900/40 hover:border-red-600/60' 
+          : 'border-[#d4af37]/20 hover:border-[#d4af37]/50'
+        }
+      `}
+    >
+      {/* 🔴 溢價警告標籤 */}
+      {isPremiumIllusion && (
+        <div className="absolute top-0 right-0 bg-red-950/90 border-b border-l border-red-500/50 px-3 py-1 rounded-bl-lg flex items-center gap-1 shadow-lg z-10">
+          <AlertTriangle className="w-3 h-3 text-red-500" />
+          <span className="text-red-400 text-[9px] font-mono font-bold tracking-widest uppercase">
+            High Premium Illusion
+          </span>
+        </div>
+      )}
+
+      <div className="flex justify-between items-start mb-4 mt-2">
+        <div>
+          <h3 className={`text-lg font-bold transition-colors ${isPremiumIllusion ? 'text-white group-hover:text-red-400' : 'text-white group-hover:text-[#d4af37]'}`}>
+            {getLocalizedName(res.name)}
+          </h3>
+          <p className="text-xs text-white/50 mt-1 uppercase tracking-widest flex items-center gap-2">
+            <span>{res.category} · {res.region}</span>
+            <span className="text-[#d4af37] font-bold tracking-widest">{priceString}</span>
+          </p>
+        </div>
+        <div className="flex flex-col items-end gap-2">
+          <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full border ${isPremiumIllusion ? 'bg-red-950/30 border-red-900/50' : 'bg-[#d4af37]/10 border-[#d4af37]/20'}`}>
+            <Star className={`w-3.5 h-3.5 ${isPremiumIllusion ? 'text-red-500 fill-red-500' : 'text-[#d4af37] fill-[#d4af37]'}`} />
+            <span className={`text-sm font-bold tabular-nums ${isPremiumIllusion ? 'text-red-500' : 'text-[#d4af37]'}`}>
+              {score}
+            </span>
+          </div>
+          <ChevronDown className={`w-4 h-4 text-white/30 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+        </div>
+      </div>
+      
+      {/* 進度條 */}
+      <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden mb-2">
+        <div
+          className={`h-full opacity-80 transition-all duration-1000 ease-out ${isPremiumIllusion ? 'bg-red-600' : 'bg-[#d4af37]'}`}
+          style={{ width: `${Math.min(100, Math.max(0, score))}%` }}
+        />
+      </div>
+
+      {/* 隱藏的數據折線圖面板 */}
+      {isExpanded && (
+        <div className={`mt-4 pt-4 border-t animate-in slide-in-from-top-4 duration-300 ${isPremiumIllusion ? 'border-red-900/30' : 'border-[#d4af37]/10'}`}>
+          <div className="flex justify-between items-center mb-2">
+            <p className={`${isPremiumIllusion ? 'text-red-400/80' : 'text-[#d4af37]'} text-[10px] tracking-widest uppercase`}>Trust Volatility History</p>
+            <p className="text-white/30 text-[9px] font-mono tracking-widest">SOVEREIGN ALGORITHM</p>
+          </div>
+          <TrustCurveChart restaurantId={res.id} />
+        </div>
+      )}
+    </div>
+  );
+};
+
+const RestaurantList = ({ searchQuery, filters }: { searchQuery: string; filters?: any }) => {
   const { language } = useLanguage();
+  const [restaurants, setRestaurants] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('restaurants')
+          .select('*')
+          .order('current_rating', { ascending: false });
+
+        if (error) throw error;
+        if (data) setRestaurants(data);
+      } catch (error) {
+        console.error("Error fetching dynamic data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRestaurants();
+  }, []);
 
   const getLocalizedName = (name: string) => {
     if (language === 'en') return name;
@@ -53,41 +133,26 @@ const RestaurantList = ({ searchQuery, filters }: { searchQuery: string; filters
     return mapping[name] || name;
   };
 
-  // 根據搜尋內容過濾餐廳
-  const filteredRestaurants = allRestaurants.filter(res => 
-    res.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    res.category.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredRestaurants = restaurants.filter(res =>
+    res.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    res.category?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <section className="py-12 px-4 sm:px-6">
+    <section className="py-12 px-4 sm:px-6 min-h-[400px]">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredRestaurants.map((res) => (
-            <div key={res.id} className="group bg-card border border-border/50 p-5 rounded-xl hover:border-[#d4af37]/50 transition-all duration-500">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-foreground group-hover:text-[#d4af37] transition-colors">
-                    {getLocalizedName(res.name)}
-                  </h3>
-                  <p className="text-xs text-muted-foreground mt-1 uppercase tracking-widest">{res.category} · {res.region}</p>
-                </div>
-                <div className="flex items-center gap-1.5 bg-[#d4af37]/10 px-3 py-1 rounded-full border border-[#d4af37]/20">
-                  <Star className="w-3.5 h-3.5 text-[#d4af37] fill-[#d4af37]" />
-                  <span className="text-sm font-bold text-[#d4af37] tabular-nums">
-                    {res.rating.toFixed(1)}
-                  </span>
-                </div>
-              </div>
-              <div className="w-full h-1 bg-secondary/30 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-[#d4af37] opacity-80" 
-                  style={{ width: `${res.rating * 10}%` }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center h-64 text-[#d4af37]/60">
+            <Loader2 className="w-8 h-8 animate-spin mb-4" />
+            <p className="font-mono text-sm tracking-widest uppercase">Syncing Sovereign Protocol...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredRestaurants.map((res) => (
+              <RestaurantCard key={res.id} res={res} getLocalizedName={getLocalizedName} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
