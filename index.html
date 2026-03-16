@@ -5,39 +5,163 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BUOYANCIS | Blackpalace AB</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=JetBrains+Mono:wght@100;400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
     <style>
         body {
-            background: radial-gradient(circle at 50% 0%, #0a1329 0%, #050A15 60%, #02040a 100%);
+            background: radial-gradient(circle at 50% 0%, #081226 0%, #030712 50%, #000000 100%);
             color: #E0E0E0;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             margin: 0;
             font-family: 'Inter', sans-serif;
-            overflow: hidden;
+            overflow-x: hidden;
         }
         .gold-text {
-            color: #D4AF37;
+            background: linear-gradient(to right, #D4AF37, #FFF8DC, #D4AF37);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
             font-family: 'Playfair Display', serif;
-            letter-spacing: -0.02em;
         }
-        .matrix-border {
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            padding: 4rem;
-            backdrop-filter: blur(10px);
-            text-align: center;
+        .glass-panel {
+            background: rgba(10, 19, 41, 0.4);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            backdrop-filter: blur(12px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-panel:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px -10px rgba(212, 175, 55, 0.2);
+        }
+        .terminal {
+            font-family: 'JetBrains Mono', monospace;
+            color: #B0A695;
+            text-shadow: 0 0 5px rgba(176, 166, 149, 0.3);
+        }
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1.2em;
+            background-color: #D4AF37;
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        /* 系統掃描線特效 */
+        .scanline {
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(212,175,55,0.05) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0.1;
+            position: absolute;
+            bottom: 100%;
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes scanline { 0% { bottom: 100%; } 100% { bottom: -100px; } }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
-<body>
-    <div class="matrix-border">
-        <h1 class="gold-text text-6xl mb-4">Blackpalace AB</h1>
-        <p class="text-sm tracking-[0.4em] text-gray-400 uppercase">The Royal Matrix Activated</p>
-        <div class="mt-8 h-[1px] w-24 bg-[#D4AF37] mx-auto opacity-50"></div>
-        <p class="mt-8 text-xs italic text-gray-500">Dissolving the Tyranny of Experience.</p>
+<body class="relative flex flex-col items-center py-20 px-6 sm:px-12">
+    <div class="scanline"></div>
+
+    <header class="text-center mb-16 opacity-0 animate-[fadeIn_2s_ease-out_forwards]">
+        <h1 class="gold-text text-5xl md:text-7xl mb-4 tracking-tight">Blackpalace AB</h1>
+        <p class="text-xs md:text-sm tracking-[0.4em] text-gray-400 uppercase">Buoyancis Royal Matrix Active</p>
+        <div class="mt-8 h-[1px] w-32 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto opacity-50"></div>
+    </header>
+
+    <div class="glass-panel w-full max-w-4xl p-6 rounded-sm mb-16 relative overflow-hidden opacity-0 animate-[fadeIn_2s_ease-out_0.5s_forwards]">
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent opacity-20"></div>
+        <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+            <div class="w-2 h-2 rounded-full bg-red-900"></div>
+            <div class="w-2 h-2 rounded-full bg-yellow-700"></div>
+            <div class="w-2 h-2 rounded-full bg-[#D4AF37]"></div>
+            <span class="text-[10px] text-gray-500 ml-2 uppercase tracking-widest font-mono">Terminal // Alpha Node</span>
+        </div>
+        <div class="terminal text-sm md:text-base leading-relaxed min-h-[140px]" id="terminal-content">
+            </div>
     </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl opacity-0 animate-[fadeIn_2s_ease-out_1s_forwards]">
+        
+        <div class="glass-panel p-8 rounded-sm group cursor-default">
+            <div class="text-[#D4AF37] mb-4 opacity-80 group-hover:opacity-100 transition-opacity">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="1" d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11m16-11v11M8 14v3m4-3v3m4-3v3"></path></svg>
+            </div>
+            <h3 class="text-xl text-gray-100 font-serif mb-3 tracking-wide group-hover:text-[#D4AF37] transition-colors">斯德哥爾摩戰略投資</h3>
+            <h4 class="text-[10px] uppercase tracking-widest text-gray-500 mb-4">Stockholm Strategic Deploy</h4>
+            <p class="text-sm text-gray-400 leading-relaxed">
+                以北歐金融中心為基點，輻射全球頂級資產。構建跨越地域與週期的防禦性財富堡壘，實現指數級資本躍遷。
+            </p>
+        </div>
+        
+        <div class="glass-panel p-8 rounded-sm group cursor-default">
+            <div class="text-[#D4AF37] mb-4 opacity-80 group-hover:opacity-100 transition-opacity">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="1" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+            </div>
+            <h3 class="text-xl text-gray-100 font-serif mb-3 tracking-wide group-hover:text-[#D4AF37] transition-colors">數據架構與演算法</h3>
+            <h4 class="text-[10px] uppercase tracking-widest text-gray-500 mb-4">Data Architecture & Algorithms</h4>
+            <p class="text-sm text-gray-400 leading-relaxed">
+                消除經驗暴政。以絕對理性的數學模型與底層數據邏輯，重塑商業決策路徑，確保矩陣運行的零熵狀態。
+            </p>
+        </div>
+
+        <div class="glass-panel p-8 rounded-sm group cursor-default">
+            <div class="text-[#D4AF37] mb-4 opacity-80 group-hover:opacity-100 transition-opacity">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="1" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <h3 class="text-xl text-gray-100 font-serif mb-3 tracking-wide group-hover:text-[#D4AF37] transition-colors">流動性與實體資產</h3>
+            <h4 class="text-[10px] uppercase tracking-widest text-gray-500 mb-4">Liquidity & Tangible Assets</h4>
+            <p class="text-sm text-gray-400 leading-relaxed">
+                從高階流動性管理到頂級重資產配置。鎖定核心稀缺資源，執行精準打擊，確保帝國根基的絕對穩固。
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const lines = [
+            "> INITIALIZING BLACKPALACE AB CORE PROTOCOLS...",
+            "> SECURITY CLEARANCE: FOUNDER LEVEL RECOGNIZED.",
+            "> REGION: STOCKHOLM, SE. [GEO-FENCE SECURED]",
+            "> STRATEGIC GOAL: 300,000,000 CAP DEPLOYMENT...",
+            "> EXECUTING ASSET ACQUISITION PROTOCOLS: [B], [AM], [K]... STANDBY.",
+            "> SYSTEM OPTIMAL. AWAITING EXECUTIVE ORDER."
+        ];
+
+        const terminal = document.getElementById('terminal-content');
+        let lineIndex = 0;
+        let charIndex = 0;
+        let currentHTML = "";
+
+        function typeChar() {
+            if (lineIndex < lines.length) {
+                if (charIndex === 0) {
+                    currentHTML += "<div class='mb-2'>";
+                }
+                
+                if (charIndex < lines[lineIndex].length) {
+                    currentHTML += lines[lineIndex].charAt(charIndex);
+                    terminal.innerHTML = currentHTML + "<span class='cursor'></span></div>";
+                    charIndex++;
+                    setTimeout(typeChar, Math.random() * 20 + 30); // 模擬真實打字速度
+                } else {
+                    currentHTML += "</div>";
+                    terminal.innerHTML = currentHTML + "<span class='cursor'></span>";
+                    lineIndex++;
+                    charIndex = 0;
+                    setTimeout(typeChar, 600); // 每行之間的停頓
+                }
+            } else {
+                terminal.innerHTML = currentHTML + "<span class='cursor'></span>";
+            }
+        }
+
+        setTimeout(typeChar, 1200); // 頁面加載後延遲啟動
+    </script>
 </body>
 </html>
