@@ -6,34 +6,35 @@
     <title>BlackPalace AB | Institutional Digital Sovereignty</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // 配置自定义深蓝与灰金色系统
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'palace-blue': {
-                            950: '#070b14', // 接近黑色的最深蓝
-                            900: '#0a1122', // 主背景蓝
-                            800: '#111a32', // 区块背景蓝
-                            700: '#192646', // 边框/交互蓝
-                        },
-                        'palace-gold': {
-                            DEFAULT: '#c5a07c', // 主灰金（Grey Gold）
-                            600: '#a38466',    // 深灰金
-                            400: '#dbbf9d',    // 亮灰金（Hover用）
-                        },
-                        'palace-grey': {
-                            300: '#d1d5db',    // 主要文字灰
-                            500: '#8c98a9',    // 次要文字灰
-                            800: '#1f293a',    // 边框灰
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
+      // tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        'palace-blue': {
+          950: '#070b14', // deepest midnight blue (e.g., CTA background)
+          900: '#0a1122', // main background blue
+          800: '#111a32', // secondary background
+          700: '#192646', // border/nav blue
+        },
+        'palace-gold': {
+          DEFAULT: '#c5a07c', // main grey gold (from Buoyancis logo)
+          600: '#a38466',    // darker gold (gradient/footer link)
+          400: '#dbbf9d',    // lighter gold (hover/gradient)
+        },
+        'palace-grey': {
+          300: '#d1d5db',    // main text grey
+          500: '#8c98a9',    // muted text grey
+          800: '#1f293a',    // border grey
         }
+      },
+      fontFamily: {
+        serif: ['Cormorant Garamond', 'serif'], // 建议用于品牌和标题
+        sans: ['Inter', 'sans-serif'],           // 用于正文
+      },
+    },
+  },
+}
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
